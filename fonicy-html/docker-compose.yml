@@ -1,0 +1,41 @@
+version: '3.9'
+
+services:
+  webserver:
+    image: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - .:/usr/share/nginx/html
+    networks:
+      - webnet
+
+  mysql:
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      # MYSQL_DATABASE: your_database_name_here
+      # MYSQL_USER: your_mysql_user_here
+      # MYSQL_PASSWORD: your_mysql_password_here
+    ports:
+      - 3306:3306
+    volumes:
+      - mysql:/var/lib/mysql
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mysql
+    networks:
+      - webnet
+
+volumes:
+  mysql:
+
+networks:
+  webnet:
